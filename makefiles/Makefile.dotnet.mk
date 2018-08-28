@@ -28,8 +28,8 @@ endif
 TEMP_DOTNET_DIR=temp_dotnet
 
 DOTNET_EXAMPLES = \
-$(TEMP_DOTNET_DIR)/tsp$D \
-$(TEMP_DOTNET_DIR)/a_puzzle$D \
+#$(TEMP_DOTNET_DIR)/tsp$D \
+#$(TEMP_DOTNET_DIR)/a_puzzle$D \
 #$(TEMP_DOTNET_DIR)/Program$D
 
 DOTNET_TESTS = \
@@ -382,7 +382,7 @@ else # This generic rule will be used if EX variable is set
 EX_NAME = $(basename $(notdir $(EX)))
 
 .PHONY: cdotnet
-cdotnet: $(BIN_DIR)/$(EX_NAME)$D
+cdotnet: $(TEMP_DOTNET_DIR)/$(EX_NAME)$D
 
 .PHONY: rdotnet
 rdotnet: $(BIN_DIR)/$(EX_NAME)$D
@@ -391,8 +391,8 @@ rdotnet: $(BIN_DIR)/$(EX_NAME)$D
 endif # ifeq ($(EX),)
 
 $(TEMP_DOTNET_DIR)/%$D: \
- $(DOTNET_EX_DIR)/csharp/%.csproj \
- $(DOTNET_EX_DIR)/csharp/%.cs \
+ $(DOTNET_EX_DIR)/%.csproj \
+ $(DOTNET_EX_DIR)/%.cs \
  $(DOTNET_ORTOOLS_NUPKG) \
  | $(TEMP_DOTNET_DIR)
 	"$(DOTNET_BIN)" build \
@@ -400,16 +400,19 @@ $(TEMP_DOTNET_DIR)/%$D: \
  $(DOTNET_EX_PATH)$Scsharp$S$*.csproj
 
 $(TEMP_DOTNET_DIR)/%$D: \
- $(DOTNET_EX_DIR)/fsharp/%.fsproj \
- $(DOTNET_EX_DIR)/fsharp/%.fs \
+ $(DOTNET_EX_DIR)/%.fsproj \
+ $(DOTNET_EX_DIR)/%.fs \
  $(DOTNET_ORTOOLS_FSHARP_NUPKG) \
- | $(BIN_DIR)
+ | $(TEMP_DOTNET_DIR)
 	"$(DOTNET_BIN)" build \
  -o "..$S..$S..$S$(TEMP_DOTNET_DIR)" \
  $(DOTNET_EX_PATH)$Sfsharp$S$*.fsproj
 
-rdotnet_%: $(DOTNET_EX_DIR)/csharp/%.csproj
-	"$(DOTNET_BIN)" run --project $(DOTNET_EX_PATH)$Scsharp$S$*.csproj -- $(ARGS)
+rdotnet_%: $(DOTNET_EX_DIR)/%.csproj
+	"$(DOTNET_BIN)" run --project $(DOTNET_EX_PATH)$S$*.csproj -- $(ARGS)
+
+rdotnet_%: $(DOTNET_EX_DIR)/%.fsproj
+	"$(DOTNET_BIN)" run --project $(DOTNET_EX_PATH)$S$*.fsproj -- $(ARGS)
 
 ################
 ##  Cleaning  ##
